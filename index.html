@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>ITHC CRM — Indian Treatment Help Center</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-app: #f8fafc; --bg-surface: #ffffff; --bg-muted: #f1f5f9;
+      --primary: #0f766e; --primary-hover: #115e59; --primary-light: #ccfbf1; --accent: #0284c7;
+      --text-main: #0f172a; --text-secondary: #475569; --text-muted: #94a3b8; --border: #e2e8f0;
+      --grade-a: #e11d48; --grade-a-bg: #ffe4e6; --grade-b: #d97706; --grade-b-bg: #fef3c7;
+      --grade-c: #059669; --grade-c-bg: #d1fae5;
+      --danger: #dc2626; --success: #16a34a; --warning: #ea580c;
+      --radius-lg: 14px; --radius-md: 10px; --radius-sm: 6px;
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.07);
+      --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.14);
+      --sidebar-w: 260px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-app); color: var(--text-main); font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+    h1, h2, h3, h4 { font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.02em; }
+    .hidden { display: none !important; }
+
+    #toastContainer { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+    .toast { background: #0f172a; color: #fff; padding: 12px 18px; border-radius: var(--radius-md); box-shadow: var(--shadow-lg); font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 10px; animation: slideIn 0.25s ease; max-width: 360px; }
+    .toast.success { border-left: 4px solid #22c55e; }
+    .toast.error { border-left: 4px solid #ef4444; }
+    @keyframes slideIn { from { transform: translateY(15px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    .auth-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; background: radial-gradient(circle at top left, #ccfbf1 0%, #f8fafc 45%, #e0f2fe 100%); }
+    .auth-card { width: 100%; max-width: 420px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 20px; padding: 36px 32px; box-shadow: var(--shadow-lg); }
+    .brand-badge { display: inline-flex; align-items: center; gap: 10px; background: var(--primary-light); color: var(--primary); padding: 8px 14px; border-radius: 999px; font-weight: 700; font-size: 13px; margin-bottom: 18px; }
+    .auth-card h1 { font-size: 24px; color: var(--text-main); margin-bottom: 6px; }
+    .auth-card p.sub { color: var(--text-secondary); font-size: 13.5px; margin-bottom: 24px; }
+
+    .form-group { margin-bottom: 15px; text-align: left; }
+    .form-group label { display: block; font-size: 12.5px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+    input, select, textarea { width: 100%; padding: 10px 13px; border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 14px; font-family: inherit; color: var(--text-main); background: #fff; transition: all 0.15s; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12); }
+    input:disabled, select:disabled, textarea:disabled { background: var(--bg-muted); color: var(--text-secondary); }
+    textarea { resize: vertical; min-height: 80px; }
+
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 16px; border-radius: var(--radius-md); font-size: 13.5px; font-weight: 600; cursor: pointer; border: 1px solid transparent; transition: all 0.15s; font-family: inherit; white-space: nowrap; text-decoration: none; }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
+    .btn-secondary { background: #fff; color: var(--text-main); border-color: var(--border); }
+    .btn-secondary:hover:not(:disabled) { background: var(--bg-muted); }
+    .btn-danger { background: #fee2e2; color: var(--danger); }
+    .btn-danger:hover:not(:disabled) { background: #fecaca; }
+    .btn-success { background: #dcfce7; color: var(--success); }
+    .btn-whatsapp { background: #25D366; color: #fff; }
+    .btn-whatsapp:hover { background: #1da851; }
+    .btn-block { width: 100%; padding: 12px; font-size: 14px; }
+    .btn-sm { padding: 6px 11px; font-size: 12px; border-radius: var(--radius-sm); }
+
+    .app-shell { display: flex; min-height: 100vh; }
+    .sidebar { width: var(--sidebar-w); background: #0f172a; color: #e2e8f0; display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; left: 0; z-index: 200; transition: transform 0.25s ease; }
+    .sidebar-brand { padding: 20px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 12px; }
+    .brand-icon { width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, #14b8a6, #0284c7); display: flex; align-items: center; justify-content: center; font-weight: 800; color: #fff; font-size: 16px; }
+    .brand-text h2 { font-size: 16px; color: #fff; line-height: 1.2; }
+    .brand-text span { font-size: 11px; color: #94a3b8; }
+    .nav-list { list-style: none; padding: 14px 12px; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+    .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: var(--radius-md); color: #cbd5e1; font-weight: 500; cursor: pointer; transition: all 0.15s; font-size: 13.5px; }
+    .nav-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
+    .nav-item.active { background: var(--primary); color: #fff; font-weight: 600; }
+    .nav-badge { margin-left: auto; background: rgba(255,255,255,0.15); color: #fff; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 700; }
+    .sidebar-user { padding: 16px; border-top: 1px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.2); }
+    .user-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: #1e293b; border: 1px solid #334155; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #38bdf8; font-size: 14px; flex-shrink: 0; }
+    .user-details { overflow: hidden; }
+    .user-details .name { font-weight: 600; color: #fff; font-size: 13px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+    .user-details .role-pill { display: inline-block; font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 4px; background: rgba(20, 184, 166, 0.2); color: #5eead4; margin-top: 2px; }
+
+    .main-area { flex: 1; margin-left: var(--sidebar-w); display: flex; flex-direction: column; min-width: 0; }
+    .topbar { height: 64px; background: rgba(255,255,255,0.88); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .topbar-left { display: flex; align-items: center; gap: 12px; }
+    .mobile-menu-btn { display: none; background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-main); }
+    .page-title { font-size: 18px; font-weight: 700; color: var(--text-main); }
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .mode-pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 99px; font-size: 11.5px; font-weight: 600; background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+    .mode-pill .dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; }
+    .mode-pill.syncing { background: #fefce8; color: #a16207; border-color: #fef08a; }
+    .mode-pill.syncing .dot { background: #eab308; }
+    .mode-pill.offline { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
+    .mode-pill.offline .dot { background: #ef4444; }
+    .workspace { padding: 24px; max-width: 1400px; width: 100%; margin: 0 auto; }
+
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .kpi-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
+    .kpi-card .kpi-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.04em; }
+    .kpi-card .kpi-val { font-size: 28px; font-weight: 800; color: var(--text-main); margin: 8px 0 4px; font-family: 'Plus Jakarta Sans', sans-serif; }
+    .kpi-card .kpi-sub { font-size: 12px; color: var(--text-muted); }
+    .kpi-card.accent-teal { border-top: 3px solid var(--primary); }
+    .kpi-card.accent-rose { border-top: 3px solid var(--grade-a); }
+    .kpi-card.accent-amber { border-top: 3px solid var(--grade-b); }
+    .kpi-card.accent-emerald { border-top: 3px solid var(--grade-c); }
+
+    .surface-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); overflow: hidden; margin-bottom: 20px; }
+    .card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .card-header h3 { font-size: 15px; font-weight: 700; }
+    .card-body { padding: 20px; }
+    .sub-note { font-size: 12px; color: var(--text-secondary); }
+
+    .filter-bar { display: grid; grid-template-columns: 2fr repeat(3, 1fr) auto; gap: 10px; padding: 16px 20px; background: #f8fafc; border-bottom: 1px solid var(--border); }
+
+    .table-responsive { width: 100%; overflow-x: auto; }
+    table.crm-table { width: 100%; border-collapse: collapse; text-align: left; }
+    table.crm-table th { padding: 12px 16px; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-secondary); background: #f8fafc; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    table.crm-table td { padding: 13px 16px; border-bottom: 1px solid var(--border); font-size: 13.5px; vertical-align: middle; }
+    table.crm-table tbody tr[data-lead-id] { transition: background 0.12s; cursor: pointer; }
+    table.crm-table tbody tr[data-lead-id]:hover { background: #f1f5f9; }
+    .muted { font-size: 12px; color: var(--text-secondary); }
+    .overdue { color: var(--danger); font-weight: 600; }
+
+    .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 99px; font-size: 11.5px; font-weight: 700; }
+    .badge-grade-A { background: var(--grade-a-bg); color: var(--grade-a); }
+    .badge-grade-B { background: var(--grade-b-bg); color: var(--grade-b); }
+    .badge-grade-C { background: var(--grade-c-bg); color: var(--grade-c); }
+    .badge-status { background: #e0f2fe; color: #0369a1; }
+    .badge-status.CONVERTED, .badge-status.APPROVED { background: #dcfce7; color: #15803d; }
+    .badge-status.LOST, .badge-status.NOT_INTERESTED, .badge-status.REJECTED { background: #fee2e2; color: #b91c1c; }
+    .badge-status.NEW, .badge-status.PENDING { background: #ede9fe; color: #6d28d9; }
+
+    .drawer-backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(2px); z-index: 500; }
+    .slide-drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 100%; max-width: 620px; background: var(--bg-surface); z-index: 510; box-shadow: var(--shadow-lg); display: flex; flex-direction: column; animation: slideLeft 0.25s ease; }
+    @keyframes slideLeft { from { transform: translateX(100%); } to { transform: translateX(0); } }
+    .drawer-header { padding: 18px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: #f8fafc; }
+    .drawer-body { padding: 24px; overflow-y: auto; flex: 1; }
+
+    .timeline { position: relative; padding-left: 20px; border-left: 2px solid var(--border); margin-top: 14px; }
+    .timeline-item { position: relative; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px dashed var(--border); }
+    .timeline-item::before { content: ''; position: absolute; left: -26px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); border: 2px solid #fff; }
+    .timeline-meta { font-size: 12px; color: var(--text-secondary); display: flex; justify-content: space-between; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
+
+    .perm-grid { width: 100%; border-collapse: collapse; }
+    .perm-grid th, .perm-grid td { padding: 10px 14px; border-bottom: 1px solid var(--border); text-align: left; }
+    .perm-grid td.center, .perm-grid th.center { text-align: center; }
+    input[type="checkbox"].perm-check { width: 17px; height: 17px; accent-color: var(--primary); cursor: pointer; }
+
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.5); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 600; }
+    .modal-card { background: #fff; border-radius: var(--radius-lg); width: 100%; max-width: 560px; box-shadow: var(--shadow-lg); overflow: hidden; max-height: 90vh; display: flex; flex-direction: column; }
+    .modal-body { padding: 20px; overflow-y: auto; }
+    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    @media (max-width: 900px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main-area { margin-left: 0; }
+      .mobile-menu-btn { display: block; }
+      .filter-bar { grid-template-columns: 1fr 1fr; }
+      .form-grid-2 { grid-template-columns: 1fr; }
+      .topbar { padding: 0 14px; }
+      .workspace { padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="toastContainer"></div>
+
+  <!-- AUTH -->
+  <div id="authView" class="auth-wrapper">
+    <div id="loginCard" class="auth-card">
+      <div class="brand-badge">🏥 ITHC Healthcare CRM</div>
+      <h1>Welcome Back</h1>
+      <p class="sub">Sign in to manage patient inquiries, follow-ups &amp; campaigns</p>
+      <form id="loginForm">
+        <div class="form-group">
+          <label>Gmail Address</label>
+          <input type="email" id="loginEmail" placeholder="name@gmail.com" autocomplete="username" required>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Sign In to Workspace</button>
+      </form>
+      <p style="margin-top: 18px; text-align: center; font-size: 13px; color: var(--text-secondary);">
+        New team member? <a href="#" id="goRegister" style="color: var(--primary); font-weight: 600;">Request Operator Account</a>
+      </p>
+    </div>
+
+    <div id="registerCard" class="auth-card hidden">
+      <div class="brand-badge">🏥 ITHC Team Onboarding</div>
+      <h1>Create Account</h1>
+      <p class="sub">Register your Gmail. Master Admin will approve your access.</p>
+      <form id="registerForm">
+        <div class="form-group"><label>Full Name *</label><input type="text" id="regName" placeholder="e.g. Tanvir Ahmed" maxlength="120" required></div>
+        <div class="form-group"><label>Gmail Address *</label><input type="email" id="regEmail" placeholder="tanvir@gmail.com" autocomplete="username" required></div>
+        <div class="form-group"><label>Set Password (min 8 chars) *</label><input type="password" id="regPassword" placeholder="••••••••" autocomplete="new-password" required minlength="8"></div>
+        <button type="submit" class="btn btn-primary btn-block">Submit Registration</button>
+      </form>
+      <p style="margin-top: 18px; text-align: center; font-size: 13px;">
+        <a href="#" id="goLogin" style="color: var(--primary); font-weight: 600;">← Back to Sign In</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div id="appShell" class="app-shell hidden">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon">IT</div>
+        <div class="brand-text">
+          <h2 id="brandCompanyName">ITHC CRM</h2>
+          <span>Patient Management System</span>
+        </div>
+      </div>
+
+      <ul class="nav-list" id="navList">
+        <li class="nav-item active" data-view="dashboard" data-perm="dashboard.read">📊 <span>Dashboard</span></li>
+        <li class="nav-item" data-view="leads" data-perm="lead.read">🧑‍⚕️ <span>Patient Leads</span> <span class="nav-badge" id="navLeadCount">0</span></li>
+        <li class="nav-item" data-view="campaigns" data-perm="campaign.read">📢 <span>Campaigns &amp; CPL</span></li>
+        <li class="nav-item" data-view="users" data-perm="user.read">👥 <span>Team &amp; Approvals</span> <span class="nav-badge hidden" id="navPendingCount">0</span></li>
+        <li class="nav-item" data-view="activity" data-perm="activity.read">🛡️ <span>Audit Trail</span></li>
+        <li class="nav-item" data-view="settings" data-perm="settings.read">⚙️ <span>Master Admin Rules</span></li>
+      </ul>
+
+      <div class="sidebar-user">
+        <div class="user-meta">
+          <div class="avatar" id="userAvatar">MA</div>
+          <div class="user-details">
+            <div class="name" id="sidebarUserName">User</div>
+            <span class="role-pill" id="sidebarUserRole">OPERATOR</span>
+          </div>
+        </div>
+        <div style="display:flex; gap:6px;">
+          <button class="btn btn-secondary btn-sm" style="flex:1; background:#1e293b; color:#cbd5e1; border-color:#334155;" id="openPwdModalBtn">🔑 Password</button>
+          <button class="btn btn-danger btn-sm" id="logoutBtn">Logout</button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="main-area">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">☰</button>
+          <div class="page-title" id="topbarTitle">Executive Dashboard</div>
+        </div>
+        <div class="topbar-right">
+          <div class="mode-pill" id="syncBadge"><span class="dot"></span><span id="syncText">LIVE SYNCED</span></div>
+          <button class="btn btn-primary btn-sm" id="quickNewLeadBtn">+ New Patient Lead</button>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <!-- DASHBOARD -->
+        <section id="view-dashboard" class="view-section">
+          <div class="kpi-grid" id="dashboardKpiGrid"></div>
+          <div class="form-grid-2">
+            <div class="surface-card">
+              <div class="card-header">
+                <h3>🔥 Priority Follow-ups &amp; High Grade Patients</h3>
+                <button class="btn btn-secondary btn-sm" data-goto="leads">View All Leads →</button>
+              </div>
+              <div class="table-responsive">
+                <table class="crm-table">
+                  <thead><tr><th>Patient</th><th>Department</th><th>Grade</th><th>Status</th><th>Next Follow-up</th></tr></thead>
+                  <tbody id="dashPriorityBody"></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="surface-card">
+              <div class="card-header"><h3>📊 Lead Grade Breakdown</h3></div>
+              <div class="card-body" id="dashBreakdownBox"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- LEADS -->
+        <section id="view-leads" class="view-section hidden">
+          <div class="surface-card">
+            <div class="card-header">
+              <div>
+                <h3>All Patient Inquiries</h3>
+                <p class="sub-note">Click any patient row to open profile, WhatsApp chat &amp; communication history</p>
+              </div>
+              <div style="display:flex; gap:8px;">
+                <button class="btn btn-secondary btn-sm" id="refreshLeadsBtn">↻ Refresh</button>
+                <button class="btn btn-primary btn-sm" id="addLeadBtn2">+ Add Patient Lead</button>
+              </div>
+            </div>
+            <div class="filter-bar">
+              <input type="text" id="fSearch" placeholder="🔍 Search by Name, Mobile or Lead ID (e.g. ITHC-00001)...">
+              <select id="fGrade">
+                <option value="">All Grades (A/B/C)</option>
+                <option value="A">Grade A (Critical/High)</option>
+                <option value="B">Grade B (Medium)</option>
+                <option value="C">Grade C (General)</option>
+              </select>
+              <select id="fStatus"><option value="">All Statuses</option></select>
+              <select id="fDept"><option value="">All Departments</option></select>
+              <button class="btn btn-secondary" id="clearFiltersBtn">Reset</button>
+            </div>
+            <div class="table-responsive">
+              <table class="crm-table">
+                <thead>
+                  <tr><th>Lead ID</th><th>Patient &amp; Mobile</th><th>Department &amp; Problem</th><th>Grade</th><th>Status</th><th>Follow-up</th><th>Assigned</th><th>Quick Action</th></tr>
+                </thead>
+                <tbody id="leadsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- CAMPAIGNS -->
+        <section id="view-campaigns" class="view-section hidden">
+          <div class="surface-card">
+            <div class="card-header">
+              <div>
+                <h3>Marketing Campaigns &amp; Real-Time CPL</h3>
+                <p class="sub-note">Cost Per Lead (CPL) is calculated from active leads linked to each campaign</p>
+              </div>
+            </div>
+            <div class="card-body" id="campaignFormBox" style="background:#f8fafc; border-bottom:1px solid var(--border);">
+              <form id="campaignForm" style="display:grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap:10px; align-items:end;">
+                <div><label style="font-size:12px; font-weight:600;">Campaign Name *</label><input type="text" name="Campaign_Name" placeholder="e.g. Cardiology FB Boost Oct" maxlength="150" required></div>
+                <div><label style="font-size:12px; font-weight:600;">Source</label><input type="text" name="Campaign_Source" placeholder="Facebook Ads / Google" maxlength="80"></div>
+                <div><label style="font-size:12px; font-weight:600;">Spend (BDT)</label><input type="number" name="Campaign_Cost" placeholder="15000" step="0.01" min="0"></div>
+                <div><label style="font-size:12px; font-weight:600;">Start Date</label><input type="date" name="Campaign_Date"></div>
+                <button type="submit" class="btn btn-primary">+ Launch Campaign</button>
+              </form>
+            </div>
+            <div class="table-responsive">
+              <table class="crm-table">
+                <thead><tr><th>ID</th><th>Campaign Name</th><th>Channel</th><th>Date</th><th>Total Spend</th><th>Leads Generated</th><th>Real CPL</th></tr></thead>
+                <tbody id="campaignsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- USERS -->
+        <section id="view-users" class="view-section hidden">
+          <div class="surface-card">
+            <div class="card-header">
+              <div>
+                <h3>Team Access, Approvals &amp; Role Control</h3>
+                <p class="sub-note">Approve pending registrations, change roles, or deactivate operators</p>
+              </div>
+              <button class="btn btn-primary btn-sm" id="addStaffBtn">+ Add Team Member</button>
+            </div>
+            <div class="table-responsive">
+              <table class="crm-table">
+                <thead><tr><th>User ID</th><th>Name &amp; Gmail</th><th>Role</th><th>Approval</th><th>Active Status</th><th>Actions</th></tr></thead>
+                <tbody id="usersTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- AUDIT -->
+        <section id="view-activity" class="view-section hidden">
+          <div class="surface-card">
+            <div class="card-header">
+              <h3>System Audit Trail (latest 200)</h3>
+              <button class="btn btn-secondary btn-sm" id="refreshActivityBtn">↻ Refresh Logs</button>
+            </div>
+            <div class="table-responsive">
+              <table class="crm-table">
+                <thead><tr><th>Time</th><th>Actor</th><th>Action</th><th>Target ID</th><th>Field Changed</th><th>Old → New</th><th>Note</th></tr></thead>
+                <tbody id="activityTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- SETTINGS -->
+        <section id="view-settings" class="view-section hidden">
+          <div class="form-grid-2">
+            <div class="surface-card">
+              <div class="card-header">
+                <div>
+                  <h3>👑 Master Admin &amp; System Configuration</h3>
+                  <p class="sub-note">Changes are saved to the database immediately</p>
+                </div>
+              </div>
+              <div class="card-body">
+                <form id="masterConfigForm">
+                  <div class="form-group">
+                    <label>Master Admin Gmail</label>
+                    <input type="email" id="setMasterEmail" required>
+                    <small style="color:var(--text-muted); font-size:11.5px;">Changing this promotes an existing account with that Gmail to MASTER_ADMIN.</small>
+                  </div>
+                  <div class="form-group"><label>Company / Organization Name</label><input type="text" id="setCompanyName" maxlength="120" required></div>
+                  <div class="form-grid-2">
+                    <div class="form-group">
+                      <label>Default Lead Grade</label>
+                      <select id="setDefaultGrade"><option value="A">Grade A</option><option value="B">Grade B</option><option value="C">Grade C</option></select>
+                    </div>
+                    <div class="form-group"><label>Follow-up Reminder (Days)</label><input type="number" id="setFollowupDays" value="1" min="0" max="365"></div>
+                  </div>
+                  <button type="submit" class="btn btn-primary" id="saveConfigBtn">💾 Save System Settings</button>
+                </form>
+              </div>
+            </div>
+
+            <div class="surface-card">
+              <div class="card-header">
+                <div>
+                  <h3>🔐 Dynamic Role Permission Matrix</h3>
+                  <p class="sub-note">Toggle what ADMIN and OPERATOR roles can do — no redeploy needed</p>
+                </div>
+                <button class="btn btn-primary btn-sm" id="savePermsBtn">Save Role Rules</button>
+              </div>
+              <div class="table-responsive" style="max-height: 420px;">
+                <table class="perm-grid">
+                  <thead><tr><th>Permission Key</th><th class="center">MASTER_ADMIN</th><th class="center">ADMIN</th><th class="center">OPERATOR</th></tr></thead>
+                  <tbody id="permMatrixBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- LEAD DRAWER -->
+  <div id="leadDrawerBackdrop" class="drawer-backdrop hidden" data-close="drawer"></div>
+  <aside id="leadDrawer" class="slide-drawer hidden">
+    <div class="drawer-header">
+      <div>
+        <span class="badge badge-status" id="drawerLeadId">ITHC-00001</span>
+        <h3 id="drawerPatientName" style="font-size:18px; margin-top:4px;">Patient Name</h3>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <a id="drawerWaBtn" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp btn-sm">💬 WhatsApp</a>
+        <button class="btn btn-secondary btn-sm" data-close="drawer">✕ Close</button>
+      </div>
+    </div>
+
+    <div class="drawer-body">
+      <form id="drawerUpdateLeadForm">
+        <input type="hidden" id="editLeadId">
+        <input type="hidden" id="editLeadVersion">
+        <div class="form-grid-2">
+          <div class="form-group"><label>Patient Name</label><input type="text" id="editPatientName" maxlength="120" required></div>
+          <div class="form-group"><label>Mobile Number</label><input type="text" id="editMobile" maxlength="25" required></div>
+          <div class="form-group"><label>Department</label><select id="editDepartment"></select></div>
+          <div class="form-group">
+            <label>Lead Grade</label>
+            <select id="editGrade">
+              <option value="A">Grade A (High Priority)</option>
+              <option value="B">Grade B (Warm)</option>
+              <option value="C">Grade C (Standard)</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Pipeline Status</label><select id="editStatus"></select></div>
+          <div class="form-group"><label>Next Follow-up Date</label><input type="date" id="editFollowup"></div>
+        </div>
+        <div class="form-group"><label>Medical Problem / Diagnosis Summary</label><textarea id="editProblem" rows="2" maxlength="2000"></textarea></div>
+        <div class="form-group"><label>Patient Note &amp; Hospital Preference</label><textarea id="editNote" rows="2" maxlength="500"></textarea></div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <button type="button" class="btn btn-danger btn-sm" id="archiveLeadBtn">🗑️ Archive Lead</button>
+          <button type="submit" class="btn btn-primary btn-sm" id="updateLeadBtn">💾 Update Patient Record</button>
+        </div>
+      </form>
+
+      <hr style="border:none; border-top:1px solid var(--border); margin: 22px 0;">
+
+      <div id="commBox" style="background:#f8fafc; padding:14px; border-radius:var(--radius-md); border:1px solid var(--border);">
+        <h4 style="font-size:13.5px; margin-bottom:10px;">📞 Log New Call / WhatsApp Follow-up</h4>
+        <form id="addCommForm">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>Channel *</label>
+              <select id="commType" required>
+                <option value="PHONE">PHONE CALL</option>
+                <option value="WHATSAPP">WHATSAPP</option>
+                <option value="MESSENGER">MESSENGER</option>
+                <option value="SMS">SMS</option>
+                <option value="EMAIL">EMAIL</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Outcome / Result</label>
+              <select id="commResult">
+                <option value="INTERESTED">INTERESTED</option>
+                <option value="INFORMATION_SENT">INFORMATION_SENT</option>
+                <option value="HOSPITAL_SUGGESTED">HOSPITAL_SUGGESTED</option>
+                <option value="CALL_BACK">CALL_BACK</option>
+                <option value="NO_RESPONSE">NO_RESPONSE</option>
+                <option value="CONVERTED">CONVERTED</option>
+                <option value="NOT_INTERESTED">NOT_INTERESTED</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group"><label>Discussion Note</label><input type="text" id="commNote" placeholder="e.g. Sent Apollo Chennai package details" maxlength="1000" required></div>
+            <div class="form-group"><label>Set Next Follow-up</label><input type="date" id="commNextDate"></div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-sm">+ Save Communication Log</button>
+        </form>
+      </div>
+
+      <h4 style="font-size:14px; margin-top:20px;">🕒 Communication History (<span id="commCountBadge">0</span>)</h4>
+      <div class="timeline" id="commTimeline"></div>
+    </div>
+  </aside>
+
+  <!-- MODAL: NEW LEAD -->
+  <div id="newLeadModal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="card-header"><h3>➕ Register New Patient Lead</h3><button class="btn btn-secondary btn-sm" data-close="newLeadModal">✕</button></div>
+      <div class="modal-body">
+        <form id="createLeadForm">
+          <div class="form-grid-2">
+            <div class="form-group"><label>Patient Name *</label><input type="text" name="Patient_Name" placeholder="e.g. Abdul Karim" maxlength="120" required></div>
+            <div class="form-group"><label>Mobile Number *</label><input type="tel" name="Mobile" placeholder="017XXXXXXXX" maxlength="25" required></div>
+            <div class="form-group"><label>Medical Department *</label><select name="Department" id="newLeadDept" required></select></div>
+            <div class="form-group">
+              <label>Priority Grade</label>
+              <select name="Lead_Grade">
+                <option value="A">Grade A (Ready with Passport/Visa)</option>
+                <option value="B">Grade B (Planning Soon)</option>
+                <option value="C" selected>Grade C (General Inquiry)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Lead Source</label>
+              <select name="Lead_Source">
+                <option value="WhatsApp">WhatsApp</option>
+                <option value="Facebook Ads">Facebook Ads</option>
+                <option value="Phone Call">Phone Call</option>
+                <option value="Website/Form">Website/Form</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Campaign</label><select name="Campaign_ID" id="newLeadCampaign"><option value="">Direct / Organic</option></select></div>
+          </div>
+          <div class="form-group"><label>Medical Problem / Chief Complaint *</label><textarea name="Medical_Problem" placeholder="Describe patient condition, reports available, etc." maxlength="2000" required></textarea></div>
+          <div class="form-grid-2">
+            <div class="form-group"><label>Next Follow-up Date</label><input type="date" name="Next_Followup_Date"></div>
+            <div class="form-group"><label>Initial Note</label><input type="text" name="Patient_Note" placeholder="e.g. Prefers Vellore or Chennai" maxlength="500"></div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Create Patient Lead</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CHANGE PASSWORD -->
+  <div id="pwdModal" class="modal-backdrop hidden">
+    <div class="modal-card" style="max-width:420px;">
+      <div class="card-header"><h3>🔑 Change Password</h3><button class="btn btn-secondary btn-sm" data-close="pwdModal">✕</button></div>
+      <div class="modal-body">
+        <form id="pwdForm">
+          <div class="form-group"><label>Current Password</label><input type="password" id="pwdCurrent" autocomplete="current-password" required></div>
+          <div class="form-group"><label>New Password (min 8 chars)</label><input type="password" id="pwdNew" autocomplete="new-password" minlength="8" required></div>
+          <div class="form-group"><label>Confirm New Password</label><input type="password" id="pwdConfirm" autocomplete="new-password" minlength="8" required></div>
+          <button type="submit" class="btn btn-primary btn-block">Update Password</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD STAFF -->
+  <div id="staffModal" class="modal-backdrop hidden">
+    <div class="modal-card" style="max-width:440px;">
+      <div class="card-header"><h3>👥 Add Team Member</h3><button class="btn btn-secondary btn-sm" data-close="staffModal">✕</button></div>
+      <div class="modal-body">
+        <form id="staffForm">
+          <div class="form-group"><label>Full Name *</label><input type="text" id="staffName" maxlength="120" required></div>
+          <div class="form-group"><label>Gmail Address *</label><input type="email" id="staffEmail" autocomplete="off" required></div>
+          <div class="form-group"><label>Temporary Password (min 8 chars) *</label><input type="password" id="staffPassword" autocomplete="new-password" minlength="8" required></div>
+          <div class="form-group">
+            <label>Role</label>
+            <select id="staffRole"><option value="OPERATOR">OPERATOR</option><option value="ADMIN">ADMIN</option></select>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Add Member</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ====================================================================
+     * ITHC CRM — Frontend (PHP + MySQL backend: api.php)
+     * ==================================================================== */
+    var API_URL = 'api.php';
+
+    var ALL_PERMISSION_KEYS = [
+      'lead.create','lead.read','lead.update','lead.archive',
+      'comm.create','comm.read',
+      'user.create','user.read','user.update','user.approve','user.reject',
+      'user.activate','user.deactivate','user.role.change',
+      'campaign.create','campaign.read','campaign.update',
+      'dashboard.read','settings.read','settings.update','activity.read','department.read'
+    ];
+
+    var STATE = {
+      token: '', user: null, departments: [], statuses: [], leads: [],
+      permissionsMatrix: null, origMasterEmail: '', leadReq: 0
+    };
+    try { STATE.token = localStorage.getItem('ithc_token') || ''; } catch (e) {}
+
+    function $(id) { return document.getElementById(id); }
+    function esc(v) {
+      return String(v == null ? '' : v).replace(/[&<>"']/g, function(c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+    function can(p) { return !!(STATE.user && STATE.user.permissions && STATE.user.permissions.indexOf(p) !== -1); }
+    function isMaster() { return !!(STATE.user && STATE.user.role === 'MASTER_ADMIN'); }
+    function dateOnly(v) { return v ? String(v).split('T')[0] : ''; }
+    function pad2(n) { return (n < 10 ? '0' : '') + n; }
+    function todayStr() { var d = new Date(); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); }
+    function waLink(mobile) {
+      var n = String(mobile || '').replace(/\D/g, '');
+      if (n.indexOf('0') === 0) n = '88' + n;
+      return 'https://wa.me/' + n;
+    }
+    function isClosed(status) { return status === 'CONVERTED' || status === 'NOT_INTERESTED' || status === 'LOST'; }
+    function fmtDate(v) { var d = dateOnly(v); return d ? esc(d) : '—'; }
+
+    function showToast(msg, type) {
+      var el = document.createElement('div');
+      el.className = 'toast ' + (type || 'success');
+      el.textContent = (type === 'error' ? '⚠️ ' : '✅ ') + msg;
+      $('toastContainer').appendChild(el);
+      setTimeout(function() { el.remove(); }, 3500);
+    }
+    function busy(form, on) {
+      form.querySelectorAll('button[type=submit]').forEach(function(b) { b.disabled = on; });
+    }
+
+    /* ---------- API ---------- */
+    function setSync(state) {
+      var badge = $('syncBadge'), text = $('syncText');
+      if (!badge) return;
+      badge.classList.remove('syncing', 'offline');
+      if (state === 'syncing') { badge.classList.add('syncing'); text.textContent = 'SYNCING...'; }
+      else if (state === 'offline') { badge.classList.add('offline'); text.textContent = 'OFFLINE / ERROR'; }
+      else { text.textContent = 'LIVE SYNCED'; }
+    }
+
+    async function apiCall(action, payload) {
+      setSync('syncing');
+      try {
+        var r = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: action, token: STATE.token, payload: payload || {} })
+        });
+        var res = await r.json();
+        setSync('ok');
+        if (res.authError && STATE.user) forceLogout(res.message);
+        return res;
+      } catch (e) {
+        setSync('offline');
+        return { success: false, message: 'সার্ভারের সাথে যোগাযোগ করা যাচ্ছে না।' };
+      }
+    }
+
+    /* ---------- Auth ---------- */
+    $('goRegister').onclick = function(e) {
+      e.preventDefault();
+      $('loginCard').classList.add('hidden');
+      $('registerCard').classList.remove('hidden');
+    };
+    $('goLogin').onclick = function(e) {
+      e.preventDefault();
+      $('registerCard').classList.add('hidden');
+      $('loginCard').classList.remove('hidden');
+    };
+
+    function saveSession(res) {
+      STATE.token = res.data.token;
+      STATE.user = res.data.user;
+      STATE.company = res.data.companyName;
+      try { localStorage.setItem('ithc_token', STATE.token); } catch (e) {}
+    }
+
+    $('loginForm').onsubmit = async function(e) {
+      e.preventDefault();
+      var form = this;
+      busy(form, true);
+      var res = await apiCall('auth.login', { email: $('loginEmail').value, password: $('loginPassword').value });
+      busy(form, false);
+      if (!res.success) return showToast(res.message, 'error');
+      $('loginPassword').value = '';
+      saveSession(res);
+      initAppWorkspace();
+    };
+
+    $('registerForm').onsubmit = async function(e) {
+      e.preventDefault();
+      var form = this;
+      busy(form, true);
+      var res = await apiCall('user.register', {
+        Full_Name: $('regName').value, Gmail: $('regEmail').value, Password: $('regPassword').value
+      });
+      busy(form, false);
+      if (!res.success) return showToast(res.message, 'error');
+      showToast(res.message);
+      form.reset();
+      $('goLogin').click();
+    };
+
+    function clearSession() {
+      try { localStorage.removeItem('ithc_token'); } catch (e) {}
+      STATE.token = '';
+      STATE.user = null;
+      $('appShell').classList.add('hidden');
+      closeAllOverlays();
+      $('authView').classList.remove('hidden');
+    }
+    function forceLogout(msg) {
+      clearSession();
+      showToast(msg || 'সেশন শেষ হয়েছে।', 'error');
+    }
+    $('logoutBtn').onclick = function() {
+      apiCall('auth.logout');
+      clearSession();
+    };
+
+    /* ---------- Workspace init ---------- */
+    async function initAppWorkspace() {
+      $('authView').classList.add('hidden');
+      $('appShell').classList.remove('hidden');
+
+      var u = STATE.user;
+      $('sidebarUserName').textContent = u.fullName;
+      $('sidebarUserRole').textContent = u.role;
+      $('userAvatar').textContent = u.fullName.slice(0, 2).toUpperCase();
+      if (STATE.company) $('brandCompanyName').textContent = STATE.company;
+
+      document.querySelectorAll('#navList .nav-item[data-perm]').forEach(function(item) {
+        item.classList.toggle('hidden', !can(item.getAttribute('data-perm')));
+      });
+      $('quickNewLeadBtn').classList.toggle('hidden', !can('lead.create'));
+      $('addLeadBtn2').classList.toggle('hidden', !can('lead.create'));
+      $('addStaffBtn').classList.toggle('hidden', !can('user.create'));
+      $('campaignFormBox').classList.toggle('hidden', !can('campaign.create'));
+      $('staffRole').innerHTML = '<option value="OPERATOR">OPERATOR</option><option value="ADMIN">ADMIN</option>' +
+        (isMaster() ? '<option value="MASTER_ADMIN">MASTER_ADMIN</option>' : '');
+
+      var results = await Promise.all([
+        can('department.read') ? apiCall('departments.list') : Promise.resolve({ data: [] }),
+        apiCall('status.list'),
+        can('lead.create') ? apiCall('campaign.options') : Promise.resolve({ data: [] })
+      ]);
+      STATE.departments = results[0].data || [];
+      STATE.statuses = results[1].data || [];
+      populateDropdowns(results[2].data || []);
+
+      switchView(can('dashboard.read') ? 'dashboard' : (can('lead.read') ? 'leads' : 'dashboard'));
+    }
+
+    function populateDropdowns(campaigns) {
+      var deptOpts = STATE.departments.map(function(d) {
+        return '<option value="' + esc(d.Department_Name) + '">' + esc(d.Department_Name) + '</option>';
+      }).join('');
+      $('fDept').innerHTML = '<option value="">All Departments</option>' + deptOpts;
+      $('newLeadDept').innerHTML = deptOpts;
+      $('editDepartment').innerHTML = deptOpts;
+
+      var stOpts = STATE.statuses.map(function(s) { return '<option value="' + esc(s) + '">' + esc(s) + '</option>'; }).join('');
+      $('fStatus').innerHTML = '<option value="">All Statuses</option>' + stOpts;
+      $('editStatus').innerHTML = stOpts;
+
+      $('newLeadCampaign').innerHTML = '<option value="">Direct / Organic</option>' + campaigns.map(function(c) {
+        return '<option value="' + esc(c.Campaign_ID) + '">' + esc(c.Campaign_Name) + '</option>';
+      }).join('');
+    }
+
+    /* ---------- Navigation ---------- */
+    document.querySelectorAll('#navList .nav-item').forEach(function(item) {
+      item.onclick = function() {
+        switchView(item.getAttribute('data-view'));
+        $('sidebar').classList.remove('open');
+      };
+    });
+    $('mobileMenuBtn').onclick = function() { $('sidebar').classList.toggle('open'); };
+
+    function switchView(viewName) {
+      document.querySelectorAll('#navList .nav-item').forEach(function(el) {
+        el.classList.toggle('active', el.getAttribute('data-view') === viewName);
+      });
+      document.querySelectorAll('.view-section').forEach(function(sec) { sec.classList.add('hidden'); });
+      $('view-' + viewName).classList.remove('hidden');
+
+      var titles = {
+        dashboard: 'Executive Dashboard', leads: 'Patient Lead Pipeline', campaigns: 'Campaigns & Real-Time CPL',
+        users: 'Team Access & Role Management', activity: 'System Audit Logs', settings: 'Master Admin & Dynamic Role Rules'
+      };
+      $('topbarTitle').textContent = titles[viewName] || 'ITHC CRM';
+
+      if (viewName === 'dashboard' && can('dashboard.read')) loadDashboard();
+      if (viewName === 'leads' && can('lead.read')) loadLeads();
+      if (viewName === 'campaigns' && can('campaign.read')) loadCampaigns();
+      if (viewName === 'users' && can('user.read')) loadUsers();
+      if (viewName === 'activity' && can('activity.read')) loadActivity();
+      if (viewName === 'settings' && can('settings.read')) loadSettingsAndPermissions();
+    }
+
+    /* ---------- Dashboard ---------- */
+    async function loadDashboard() {
+      var res = await apiCall('dashboard');
+      if (!res.success) return showToast(res.message, 'error');
+      var s = res.data;
+
+      var pb = $('navPendingCount');
+      if (s.pendingUsers > 0) { pb.textContent = s.pendingUsers; pb.classList.remove('hidden'); }
+      else pb.classList.add('hidden');
+      $('navLeadCount').textContent = s.totalActiveLeads;
+
+      var cplVal = (s.averageCPL === null) ? '—' : (s.averageCPL === 'N/A' ? 'N/A' : '৳' + Number(s.averageCPL).toLocaleString());
+      var cplSub = (s.totalCampaignCost === null) ? 'Restricted' : 'Total Spend: ৳' + Number(s.totalCampaignCost).toLocaleString();
+      var cards = [
+        { label: 'Total Active Patients', val: s.totalActiveLeads, sub: s.newLeads + ' new inquiries', cls: 'accent-teal' },
+        { label: 'Grade A (High Priority)', val: s.gradeA, sub: 'Ready for hospital / visa', cls: 'accent-rose' },
+        { label: 'Follow-up Due / Overdue', val: s.followupDue, sub: 'Requires a call', cls: 'accent-amber' },
+        { label: 'Converted Patients', val: s.converted, sub: s.totalCommunications + ' total interactions', cls: 'accent-emerald' },
+        { label: 'Campaign Average CPL', val: cplVal, sub: cplSub, cls: 'accent-teal' }
+      ];
+      $('dashboardKpiGrid').innerHTML = cards.map(function(k) {
+        return '<div class="kpi-card ' + k.cls + '"><div class="kpi-label">' + esc(k.label) + '</div><div class="kpi-val">' + esc(k.val) +
+          '</div><div class="kpi-sub">' + esc(k.sub) + '</div></div>';
+      }).join('');
+
+      var total = Math.max(s.totalActiveLeads, 1);
+      function bar(label, n, color) {
+        return '<div style="margin-bottom:14px;"><div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:4px;"><span>' +
+          esc(label) + '</span><span>' + n + ' patients</span></div><div style="height:8px;background:#f1f5f9;border-radius:99px;overflow:hidden;"><div style="height:100%;width:' +
+          Math.round(n / total * 100) + '%;background:' + color + ';"></div></div></div>';
+      }
+      $('dashBreakdownBox').innerHTML =
+        bar('Grade A (Critical / Ready)', s.gradeA, 'var(--grade-a)') +
+        bar('Grade B (Warm Follow-up)', s.gradeB, 'var(--grade-b)') +
+        bar('Grade C (Initial Inquiry)', s.gradeC, 'var(--grade-c)');
+
+      if (can('lead.read')) {
+        var lRes = await apiCall('lead.list', { priority: true, limit: 5 });
+        var rows = (lRes.data && lRes.data.rows) || [];
+        $('dashPriorityBody').innerHTML = rows.length ? rows.map(function(r) {
+          return '<tr data-lead-id="' + esc(r.Lead_ID) + '">' +
+            '<td><strong>' + esc(r.Patient_Name) + '</strong><br><span class="muted">' + esc(r.Mobile) + '</span></td>' +
+            '<td>' + esc(r.Department) + '</td>' +
+            '<td><span class="badge badge-grade-' + esc(r.Lead_Grade) + '">Grade ' + esc(r.Lead_Grade) + '</span></td>' +
+            '<td><span class="badge badge-status ' + esc(r.Lead_Status) + '">' + esc(r.Lead_Status) + '</span></td>' +
+            '<td>' + fmtDate(r.Next_Followup_Date) + '</td></tr>';
+        }).join('') : '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-muted);">No open leads.</td></tr>';
+      }
+    }
+
+    /* ---------- Leads ---------- */
+    var searchTimer = null;
+    async function loadLeads() {
+      var myReq = ++STATE.leadReq;
+      var res = await apiCall('lead.list', {
+        q: $('fSearch').value.trim(),
+        Lead_Grade: $('fGrade').value,
+        Lead_Status: $('fStatus').value,
+        Department: $('fDept').value
+      });
+      if (myReq !== STATE.leadReq) return; // পুরনো রেসপন্স বাদ
+      if (!res.success) return showToast(res.message, 'error');
+      STATE.leads = res.data.rows || [];
+
+      var tbody = $('leadsTableBody');
+      if (!STATE.leads.length) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--text-muted);">No patient leads match your filter criteria.</td></tr>';
+        return;
+      }
+      var today = todayStr();
+      tbody.innerHTML = STATE.leads.map(function(r) {
+        var fu = dateOnly(r.Next_Followup_Date);
+        var late = fu && fu <= today && !isClosed(r.Lead_Status);
+        var prob = String(r.Medical_Problem || '');
+        return '<tr data-lead-id="' + esc(r.Lead_ID) + '">' +
+          '<td><span style="font-weight:700;color:var(--primary);">' + esc(r.Lead_ID) + '</span></td>' +
+          '<td><strong>' + esc(r.Patient_Name) + '</strong><br><span class="muted">📞 ' + esc(r.Mobile) + '</span></td>' +
+          '<td><strong>' + esc(r.Department) + '</strong><br><span class="muted">' + esc(prob.slice(0, 48)) + (prob.length > 48 ? '...' : '') + '</span></td>' +
+          '<td><span class="badge badge-grade-' + esc(r.Lead_Grade) + '">Grade ' + esc(r.Lead_Grade) + '</span></td>' +
+          '<td><span class="badge badge-status ' + esc(r.Lead_Status) + '">' + esc(r.Lead_Status) + '</span></td>' +
+          '<td><span class="' + (late ? 'overdue' : '') + '">' + fmtDate(r.Next_Followup_Date) + '</span><br><span style="font-size:11px;color:var(--text-muted);">💬 ' + (r.Communication_Count || 0) + ' logs</span></td>' +
+          '<td>' + esc(r.Assigned_To || '—') + '</td>' +
+          '<td><a href="' + esc(waLink(r.Mobile)) + '" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp btn-sm">WhatsApp</a></td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    $('fSearch').addEventListener('input', function() {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(loadLeads, 300);
+    });
+    ['fGrade', 'fStatus', 'fDept'].forEach(function(id) { $(id).addEventListener('change', loadLeads); });
+    $('clearFiltersBtn').onclick = function() {
+      $('fSearch').value = ''; $('fGrade').value = ''; $('fStatus').value = ''; $('fDept').value = '';
+      loadLeads();
+    };
+    $('refreshLeadsBtn').onclick = loadLeads;
+
+    /* ---------- Lead drawer ---------- */
+    async function openLeadDrawer(leadId) {
+      var r = await apiCall('lead.get', { Lead_ID: leadId });
+      if (!r.success) return showToast(r.message, 'error');
+      var lead = r.data;
+
+      $('drawerLeadId').textContent = lead.Lead_ID + ' (v' + lead.Version + ')';
+      $('drawerPatientName').textContent = lead.Patient_Name;
+      $('drawerWaBtn').href = waLink(lead.Mobile);
+
+      $('editLeadId').value = lead.Lead_ID;
+      $('editLeadVersion').value = lead.Version;
+      $('editPatientName').value = lead.Patient_Name;
+      $('editMobile').value = lead.Mobile;
+      $('editDepartment').value = lead.Department;
+      $('editGrade').value = lead.Lead_Grade;
+      $('editStatus').value = lead.Lead_Status;
+      $('editFollowup').value = dateOnly(lead.Next_Followup_Date);
+      $('editProblem').value = lead.Medical_Problem || '';
+      $('editNote').value = lead.Patient_Note || '';
+
+      var canEdit = can('lead.update');
+      document.querySelectorAll('#drawerUpdateLeadForm input, #drawerUpdateLeadForm select, #drawerUpdateLeadForm textarea').forEach(function(el) { el.disabled = !canEdit; });
+      $('updateLeadBtn').classList.toggle('hidden', !canEdit);
+      $('archiveLeadBtn').classList.toggle('hidden', !can('lead.archive'));
+      $('commBox').classList.toggle('hidden', !can('comm.create'));
+
+      $('leadDrawerBackdrop').classList.remove('hidden');
+      $('leadDrawer').classList.remove('hidden');
+      if (can('comm.read')) loadLeadCommunications(leadId);
+      else $('commTimeline').innerHTML = '';
+    }
+    function closeLeadDrawer() {
+      $('leadDrawerBackdrop').classList.add('hidden');
+      $('leadDrawer').classList.add('hidden');
+    }
+
+    async function loadLeadCommunications(leadId) {
+      var res = await apiCall('comm.list', { Lead_ID: leadId });
+      var list = res.data || [];
+      $('commCountBadge').textContent = list.length;
+      if (!list.length) {
+        $('commTimeline').innerHTML = '<p style="color:var(--text-muted);font-size:13px;">No communication logged yet.</p>';
+        return;
+      }
+      $('commTimeline').innerHTML = list.map(function(c) {
+        var dt = c.Communication_Date_Time ? new Date(c.Communication_Date_Time).toLocaleString() : '';
+        return '<div class="timeline-item"><div class="timeline-meta"><strong>' + esc(c.Communication_Type) + ' • ' + esc(c.Communication_Result || 'Note') +
+          '</strong><span>' + esc(dt) + ' by ' + esc(c.User_Name) + '</span></div><div style="font-size:13.5px;">' + esc(c.Communication_Note || '—') + '</div></div>';
+      }).join('');
+    }
+
+    $('drawerUpdateLeadForm').onsubmit = async function(e) {
+      e.preventDefault();
+      var form = this;
+      busy(form, true);
+      var res = await apiCall('lead.update', {
+        Lead_ID: $('editLeadId').value,
+        Version: $('editLeadVersion').value,
+        Patient_Name: $('editPatientName').value,
+        Mobile: $('editMobile').value,
+        Department: $('editDepartment').value,
+        Lead_Grade: $('editGrade').value,
+        Lead_Status: $('editStatus').value,
+        Next_Followup_Date: $('editFollowup').value,
+        Medical_Problem: $('editProblem').value,
+        Patient_Note: $('editNote').value
+      });
+      busy(form, false);
+      if (!res.success) return showToast(res.message, 'error');
+      showToast(res.message);
+      var id = $('editLeadId').value;
+      $('editLeadVersion').value = res.data.Version;
+      $('drawerLeadId').textContent = id + ' (v' + res.data.Version + ')';
+      $('drawerPatientName').textContent = $('editPatientName').value;
+      $('drawerWaBtn').href = waLink($('editMobile').value);
+      loadLeads();
+      if (can('dashboard.read')) loadDashboard();
+    };
+
+    $('addCommForm').onsubmit = async function(e) {
+      e.preventDefault();
+      var form = this;
+      var leadId = $('editLeadId').value;
+      busy(form, true);
+      var res = await apiCall('comm.add', {
+        Lead_ID: leadId,
+        Communication_Type: $('commType').value,
+        Communication_Result: $('commResult').value,
+        Communication_Note: $('commNote').value,
+        Next_Followup_Date: $('commNextDate').value
+      });
+      busy(form, false);
+      if (!res.success) return showToast(res.message, 'error');
+      $('commNote').value = '';
+      $('commNextDate').value = '';
+      showToast(res.message);
+      if (can('comm.read')) loadLeadCommunications(leadId);
+      loadLeads();
+    };
+
+    $('archiveLeadBtn').onclick = async function() {
+      if (!confirm('এই লিডটি Archive করতে চান?')) return;
+      var res = await apiCall('lead.archive', { Lead_ID: $('editLeadId').value });
+      if (!res.success) return showToast(res.message, 'error');
+      showToast(res.message);
+      closeLeadDrawer();
+      loadLeads();
+      if (can('dashboard.read')) loadDashboard();
+    };
+
+    /* ---------- New lead modal ---------- */
+    function openLeadModal() { if (can('lead.create')) $('newLeadModal').classList.remove('hidden'); }
+    $('quickNewLeadBtn').onclick = openLeadModal;
+    $('addLeadBtn2').onclick = openLeadModal;
+
+    $('createLeadForm').onsubmit = async function(e) {
+      e.preventDefault();
+      var form = this;
+      var obj = {};
+      new FormData(form).forEach(function(v, k) { obj[k] = v; });
+      busy(form, true);
+      var res = await apiCall('lead.create', obj);
+      busy(form, false);
+      if (!res.success) return showToast(res.message, 'error');
+      showToast(res.message);
+      form.reset();
+      $('newLeadModal').classList.add('hidden');
+      if (!$('view-leads').classList.contains('hidden')) loadLeads();
+      if (!$('view-dashboard').classList.contains('hidden') && can('dashboard.read')) loadDashboard();
+    };
+
+    /* ---------- Campaigns ---------- */
+    async function loadCampaigns() {
+      var res = await apiCall('campaign.list');
+      if (!res.success) return showToast(res.message, 'error');
+      $('campaignsTableBody').innerHTML = (res.data || []).map(function(c) {
+        return '<tr><td><strong>' + esc(c.Campaign_ID) + '</strong></td><td><strong>' + esc(c.Campaign_Name) + '</strong></td>' +
+          '<td>' + esc(c.Campaign_Source || '—') + '</td><td>' + fmtDate(c.Campaign_Date) + '</td>' +
+          '<td>৳' + Number(c.Campaign_Cost || 0).toLocaleString() + '</td>' +
+          '<td><span class="badge badge-status">' + c.Total_Leads + ' Leads</span></td>' +
+          '<td><strong>' + (c.Cost_Per_Lead === 'N/A' ? 'N/A' : '৳' + Number(c.Cost_Per_Lead).toLocaleString()) + '</strong></td></tr>';
+      }).join('');
+    }
+
+    $('campaignForm').onsubmit = async function(e) {
+      e.preventDefault();
+      var form = this;
+      var obj = {};
+      new FormData(form).forEach(function(v, k) { obj[k] = v; });
+      busy(form, true);
+      var res = await apiCall('campaign.create', obj);
+      busy(form, false);
+      if (!res.success) return showToast(res.message, 'error');
+      showToast(res.message);
+      form.reset();
+      loadCampaigns();
+      if (can('lead.create')) {
+        var o = await apiCall('campaign.options');
+        populateDropdowns(o.data || []);
+      }
+    };
+
+    /* ---------- Users ---------- */
+    async function loadUsers() {
+      var res = await apiCall('user.list');
+      if (!res.success) return showToast(res.message, 'error');
+      var myId = STATE.user.userId;
+      $('usersTableBody').innerHTML = (res.data || []).map(function(u) {
+        var isMasterRow = u.Role === 'MASTER_ADMIN';
+        var isSelf = u.User_ID === myId;
+        var roleCell;
+        if (can('user.role.change') && !isSelf && (!isMasterRow || isMaster())) {
+          roleCell = '<select class="role-select" data-uid="' + esc(u.User_ID) + '" style="width:auto;padding:4px 8px;font-size:12px;">' +
+            ['OPERATOR', 'ADMIN'].concat(isMaster() || isMasterRow ? ['MASTER_ADMIN'] : []).map(function(r) {
+              return '<option value="' + r + '"' + (u.Role === r ? ' selected' : '') + '>' + r + '</option>';
+            }).join('') + '</select>';
+        } else {
+          roleCell = '<span class="badge ' + (isMasterRow ? 'badge-grade-A' : 'badge-status') + '">' + (isMasterRow ? '👑 ' : '') + esc(u.Role) + '</span>';
+        }
+        var btns = '';
+        if (u.Status === 'PENDING' || u.Status === 'REJECTED') {
+          if (can('user.approve')) btns += '<button class="btn btn-success btn-sm" data-uaction="user.approve" data-uid="' + esc(u.User_ID) + '">✓ Approve</button>';
+        }
+        if (u.Status === 'PENDING' && can('user.reject')) {
+          btns += '<button class="btn btn-danger btn-sm" data-uaction="user.reject" data-uid="' + esc(u.User_ID) + '">✕ Reject</button>';
+        }
+        if (!isMasterRow && !isSelf && u.Status === 'APPROVED') {
+          var act = u.Active ? 'user.deactivate' : 'user.activate';
+          if (can(act)) btns += '<button class="btn btn-secondary btn-sm" data-uaction="' + act + '" data-uid="' + esc(u.User_ID) + '">' + (u.Active ? 'Deactivate' : 'Activate') + '</button>';
+        }
+        return '<tr><td>' + esc(u.User_ID) + '</td>' +
+          '<td><strong>' + esc(u.Full_Name) + '</strong><br><span class="muted">' + esc(u.Gmail) + '</span></td>' +
+          '<td>' + roleCell + '</td>' +
+          '<td><span class="badge badge-status ' + esc(u.Status) + '">' + esc(u.Status) + '</span></td>' +
+          '<td>' + (u.Active ? '🟢 Active' : '🔴 Deactivated') + '</td>' +
+          '<td><div style="display:flex;gap:6px;flex-wrap:wrap;">' + btns + '</div></td></tr>';
+      }).join('');
+    }
+
+    async function userAction(action, uid, extra) {
+      var res = await apiCall(action, Object.assign({ User_ID: uid }, extra || {}));
+      if (!res.success) { showToast(res.message, 'error'); return loadUsers(); }
+      showToast(res.message);
+      loadUsers();
+      if (can('dashboard.read')) loadDashboard();
+    }
+
+    $('usersTableBody').addEventListener('click', function(e) {
+      var b = e.target.closest('button[data-uaction]');
+      if (b) userAction(b.getAttribute('data-uaction'), b.getAttribute('data-uid'));
+    });
+    $('usersTableBody').addEventListener('change', function(e) {
+      var sel = e.target.closest('select.role-select');
+      if (sel) userAction('user.role', sel.getAttribute('data-uid'), { Role: sel.value });
+    });
+
+    $('addStaffBtn').onclick = function() { if (can('user.create')) $('staffModal').classList.remove('hidden'); };
+    $('staffForm').onsubmit = async function(e) {
+      e.preventDefault();
+      var form = this;
+      busy(form, true);
+      var res = await apiCall('user.create', {
+        Full_Name: $('staffName').value, Gmail: $('staffEmail').value,
+        Password: $('staffPassword').value, Role: $('staffRole').value
+      });
+      busy(form, false);
+      if (!res.success) return showToast(res.message, 'error');
+      showToast(res.message);
+      form.reset();
+      $('staffModal').classList.add('hidden');
+      loadUsers();
+    };
+
+    /* ---------- Password ---------- */
+    $('openPwdModalBtn').onclick = function() { $('pwdModal').classList.remove('hidden'); };
+    $('pwdForm').onsubmit = async function(e) {
+      e.preventDefault();
+      var form = this;
+      if ($('pwdNew').value !== $('pwdConfirm').value) return showToast('নতুন পাসওয়ার্ড দুটি মিলছে না।', 'error');
+      busy(form, true);
+      var res = await apiCall('auth.changePassword', { current: $('pwdCurrent').value, new: $('pwdNew').value });
+      busy(form, false);
+      if (!res.success) return showToast(res.message, 'error');
+      showToast(res.message);
+      form.reset();
+      $('pwdModal').classList.add('hidden');
+    };
+
+    /* ---------- Audit ---------- */
+    async function loadActivity() {
+      var res = await apiCall('activity.list');
+      if (!res.success) return showToast(res.message, 'error');
+      var rows = (res.data && res.data.rows) || [];
+      $('activityTableBody').innerHTML = rows.map(function(a) {
+        var dt = a.Activity_Date_Time ? new Date(a.Activity_Date_Time).toLocaleString() : '';
+        return '<tr><td class="muted">' + esc(dt) + '</td><td><strong>' + esc(a.User_Name) + '</strong></td>' +
+          '<td><span class="badge badge-status">' + esc(a.Action) + '</span></td><td>' + esc(a.Target_ID || '—') + '</td>' +
+          '<td>' + esc(a.Field_Name || '—') + '</td>' +
+          '<td style="font-size:12px;">' + esc(a.Old_Value || '') + ' → <strong>' + esc(a.New_Value || '') + '</strong></td>' +
+          '<td>' + esc(a.Activity_Note || '') + '</td></tr>';
+      }).join('');
+    }
+    $('refreshActivityBtn').onclick = loadActivity;
+
+    /* ---------- Settings & permissions ---------- */
+    async function loadSettingsAndPermissions() {
+      var res = await apiCall('settings.get');
+      if (!res.success) return showToast(res.message, 'error');
+
+      STATE.origMasterEmail = res.masterAdminEmail || '';
+      $('setMasterEmail').value = STATE.origMasterEmail;
+      var map = {};
+      (res.data || []).forEach(function(r) { map[r.Setting_Key] = r.Setting_Value; });
+      $('setCompanyName').value = map.COMPANY_NAME || '';
+      $('setDefaultGrade').value = map.DEFAULT_LEAD_GRADE || 'C';
+      $('setFollowupDays').value = map.FOLLOWUP_REMINDER || '1';
+
+      var canSave = can('settings.update');
+      document.querySelectorAll('#masterConfigForm input, #masterConfigForm select').forEach(function(el) { el.disabled = !canSave; });
+      $('setMasterEmail').disabled = !(canSave && isMaster());
+      $('saveConfigBtn').classList.toggle('hidden', !canSave);
+      $('savePermsBtn').classList.toggle('hidden', !isMaster());
+
+      STATE.permissionsMatrix = res.permissionsMatrix || { ADMIN: [], OPERATOR: [] };
+      renderPermissionsMatrix();
+    }
+
+    function renderPermissionsMatrix() {
+      var m = STATE.permissionsMatrix;
+      var dis = isMaster() ? '' : ' disabled';
+      $('permMatrixBody').innerHTML = ALL_PERMISSION_KEYS.map(function(perm) {
+        var inAdmin = (m.ADMIN || []).indexOf(perm) !== -1;
+        var inOp = (m.OPERATOR || []).indexOf(perm) !== -1;
+        return '<tr><td><code style="font-size:12.5px;font-weight:600;color:var(--primary);">' + esc(perm) + '</code></td>' +
+          '<td class="center"><input type="checkbox" class="perm-check" checked disabled></td>' +
+          '<td class="center"><input type="checkbox" class="perm-check" data-role="ADMIN" data-perm="' + esc(perm) + '"' + (inAdmin ? ' checked' : '') + dis + '></td>' +
+          '<td class="center"><input type="checkbox" class="perm-check" data-role="OPERATOR" data-perm="' + esc(perm) + '"' + (inOp ? ' checked' : '') + dis + '></td></tr>';
+      }).join('');
+    }
+
+    $('masterConfigForm').onsubmit = async function(e) {
+      e.preventDefault();
+      var form = this;
+      busy(form, true);
+      var jobs = [
+        ['COMPANY_NAME', $('setCompanyName').value.trim()],
+        ['DEFAULT_LEAD_GRADE', $('setDefaultGrade').value],
+        ['FOLLOWUP_REMINDER', String($('setFollowupDays').value)]
+      ];
+      var newEmail = $('setMasterEmail').value.trim().toLowerCase();
+      if (isMaster() && newEmail && newEmail !== STATE.origMasterEmail.toLowerCase()) jobs.unshift(['MASTER_ADMIN_EMAIL', newEmail]);
+
+      for (var i = 0; i < jobs.length; i++) {
+        var r = await apiCall('settings.update', { key: jobs[i][0], value: jobs[i][1] });
+        if (!r.success) { busy(form, false); return showToast(r.message, 'error'); }
+      }
+      busy(form, false);
+      $('brandCompanyName').textContent = $('setCompanyName').value.trim();
+      STATE.origMasterEmail = newEmail || STATE.origMasterEmail;
+      showToast('Settings saved!');
+    };
+
+    $('savePermsBtn').onclick = async function() {
+      var matrix = { ADMIN: [], OPERATOR: [] };
+      document.querySelectorAll('#permMatrixBody input.perm-check[data-role]').forEach(function(chk) {
+        if (chk.checked) matrix[chk.getAttribute('data-role')].push(chk.getAttribute('data-perm'));
+      });
+      var res = await apiCall('permissions.update', { matrix: matrix });
+      if (!res.success) return showToast(res.message, 'error');
+      showToast(res.message);
+    };
+
+    /* ---------- Global handlers ---------- */
+    function closeAllOverlays() {
+      closeLeadDrawer();
+      ['newLeadModal', 'pwdModal', 'staffModal'].forEach(function(id) { $(id).classList.add('hidden'); });
+    }
+
+    document.addEventListener('click', function(e) {
+      var g = e.target.closest('[data-goto]');
+      if (g) return switchView(g.getAttribute('data-goto'));
+
+      var c = e.target.closest('[data-close]');
+      if (c) {
+        var what = c.getAttribute('data-close');
+        if (what === 'drawer') closeLeadDrawer(); else $(what).classList.add('hidden');
+        return;
+      }
+
+      var tr = e.target.closest('tr[data-lead-id]');
+      if (tr && !e.target.closest('a')) openLeadDrawer(tr.getAttribute('data-lead-id'));
+    });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeAllOverlays(); });
+
+    /* ---------- Boot: পেজ রিফ্রেশে সেশন ফিরিয়ে আনা ---------- */
+    (async function boot() {
+      if (!STATE.token) return;
+      var res = await apiCall('auth.me');
+      if (res.success) {
+        STATE.user = res.data.user;
+        STATE.company = res.data.companyName;
+        initAppWorkspace();
+      } else {
+        try { localStorage.removeItem('ithc_token'); } catch (e) {}
+        STATE.token = '';
+      }
+    })();
+  </script>
+</body>
+</html>
